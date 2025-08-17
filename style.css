@@ -1,62 +1,172 @@
-:root {
-  --bg: #111418;
-  --panel: #181c22;
-  --text: #e8eaed;
-  --muted: #9aa0a6;
-  --accent: #6ea8fe;
-  --danger: #ff6b6b;
-  --ok: #6ede8a;
-  --border: #262b33;
-  --badge: #202632;
+/* ===========================
+   Base / iOS対策
+=========================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #111418;
+  color: #e8eaed;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+  -webkit-text-size-adjust: 100%; /* iOSの自動拡大を抑止 */
 }
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; }
-.container {
-  max-width: 720px; margin: 24px auto; padding: 20px;
-  background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+body {
+  padding: 20px;
+  padding-bottom: env(safe-area-inset-bottom); /* iPhoneホームバー余白 */
 }
-h1 { margin: 0 0 16px; font-weight: 700; letter-spacing: .4px; }
 
+h1 {
+  margin: 0 0 12px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* ===========================
+   コンテナ
+=========================== */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  background: #181c22;
+  border: 1px solid #262b33;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  padding: 16px;
+}
+
+/* ===========================
+   フォーム共通
+=========================== */
+input, select, button {
+  height: 44px;              /* 16px以上の文字でズーム防止 */
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #262b33;
+  background: #141922;
+  color: #e8eaed;
+  padding: 0 12px;
+  min-width: 0;              /* グリッド内はみ出し防止 */
+  box-sizing: border-box;
+}
+input::placeholder { color: #9aa0a6; }
+
+button {
+  background: #6ea8fe;
+  color: #0b1220;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: transform .05s ease, opacity .15s ease;
+}
+button:hover { opacity: .96; }
+button:active { transform: translateY(1px); }
+
+/* ===========================
+   レイアウト（モバイル優先）
+=========================== */
 .controls { display: grid; gap: 12px; }
-.add-row, .filter-row { display: grid; gap: 8px; grid-template-columns: 1fr 0.7fr auto; }
-.filter-row { grid-template-columns: 1fr 1fr; }
+
+.add-row,
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr; /* まずは縦積み */
+  gap: 8px;
+}
+.add-row button { width: 100%; }
+
+/* 380px~: 入力 + 追加ボタンを横並びに（カテゴリは折返し） */
+@media (min-width: 380px) {
+  .add-row { grid-template-columns: 1fr auto; }
+}
+
+/* 480px~: 入力 + カテゴリ + 追加を横並びに */
+@media (min-width: 480px) {
+  .add-row { grid-template-columns: 1fr 0.8fr auto; }
+}
+
+/* 560px~: フィルタ2列 */
 @media (min-width: 560px) {
   .filter-row { grid-template-columns: 1fr 1fr; }
 }
 
-input, select, button {
-  height: 42px; border-radius: 10px; border: 1px solid var(--border);
-  background: #141922; color: var(--text); padding: 0 12px; font-size: 15px;
+/* ===========================
+   タスクリスト
+=========================== */
+.list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
 }
-input::placeholder { color: var(--muted); }
-button { background: var(--accent); color: #0b1220; font-weight: 700; cursor: pointer; border: none; }
-button:hover { opacity: .95; }
-button:active { transform: translateY(1px); }
-
-.list { list-style: none; margin: 12px 0 0; padding: 0; }
 .list li {
-  display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center;
-  padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #141922; margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 28px 1fr auto; /* チェック / 本文+バッジ / 操作 */
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #141922;
+  border: 1px solid #262b33;
+  border-radius: 12px;
 }
-.checkbox { width: 18px; height: 18px; accent-color: var(--ok); }
 
-.text { line-height: 1.4; }
-.text.done { text-decoration: line-through; color: var(--muted); }
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #6ede8a;
+}
+
+.text {
+  line-height: 1.4;
+  overflow-wrap: anywhere; /* 長文で横スクロールしない */
+}
+.text.done {
+  text-decoration: line-through;
+  color: #9aa0a6;
+}
 
 .badge {
-  display: inline-block; background: var(--badge); color: var(--muted);
-  border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; font-size: 12px; margin-left: 8px;
+  display: inline-block;
+  margin-left: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #9aa0a6;
+  background: #202632;
+  border: 1px solid #262b33;
+  border-radius: 999px;
+  max-width: 40vw;                 /* iPhone幅でのはみ出し防止 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.badge.editing input { height: 30px; }
 
-.actions { display: flex; gap: 8px; }
-.del { background: var(--danger); color: #1b0b0b; }
+.actions {
+  display: flex;
+  gap: 8px;
+}
+.del {
+  background: #ff6b6b;
+  color: #1b0b0b;
+}
 
-.summary { margin-top: 6px; color: var(--muted); font-size: 13px; text-align: right; }
-
-/* インライン編集用 */
+/* ===========================
+   インライン編集入力
+=========================== */
 .edit-input {
-  width: 100%; height: 32px; border-radius: 8px; border: 1px solid var(--border);
-  background: #10151e; color: var(--text); padding: 0 8px;
+  width: 100%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #262b33;
+  background: #10151e;
+  color: #e8eaed;
+  padding: 0 8px;
+  font-size: 16px;
+}
+
+/* ===========================
+   フッター
+=========================== */
+.summary {
+  margin-top: 6px;
+  color: #9aa0a6;
+  font-size: 13px;
+  text-align: right;
 }
